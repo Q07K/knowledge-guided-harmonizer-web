@@ -1,112 +1,89 @@
 <template>
   <div class="container">
-    <h1>온톨로지 메타모델 시각화</h1>
+    <h1>Knowledge-Guided Harmonizer</h1>
     
     <div class="main-content">
-      <div class="input-panel">
-        <JsonInputPanel 
-          v-model="jsonInput"
+      <div class="left-panel">
+        <SqlInputPanel 
+          v-model="sqlInput" 
           :error-message="errorMessage"
-          @visualize="visualizeData"
-          @load-sample="loadSampleData"
-          @clear="clearData"
-        />
-        
-        <ModelInfoPanel 
-          :show="showInfoPanel"
-          :model-info="modelInfo"
+          @validation-result="handleValidationResult"
+        />        <ChatPanel 
+          :sql-query="sqlInput"
+          :sql-validation="sqlValidation"
+          @start-analysis="handleStartAnalysis"
+          @visualization-data="handleVisualizationData"
         />
       </div>
       
-      <VisualizationPanel :data="currentData" />
+      <div class="right-panel">
+        <VisualizationPanel 
+          :data="visualizationData"
+          :title="'온톨로지 지식 그래프'"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import JsonInputPanel from '../components/JsonInputPanel.vue'
-import ModelInfoPanel from '../components/ModelInfoPanel.vue'
+import { ref } from 'vue'
+import SqlInputPanel from '../components/SqlInputPanel.vue'
+import ChatPanel from '../components/ChatPanel.vue'
 import VisualizationPanel from '../components/VisualizationPanel.vue'
-import { getSampleData, calculateModelInfo } from '../components/utils.js'
+import { useHarmonizerApi } from '../composables/useHarmonizerApi.js'
 
 export default {
   name: 'Home',
   components: {
-    JsonInputPanel,
-    ModelInfoPanel,
+    SqlInputPanel,
+    ChatPanel,
     VisualizationPanel
   },
   setup() {
-    const jsonInput = ref('')
+    const sqlInput = ref('')
     const errorMessage = ref('')
-    const showInfoPanel = ref(false)
-    const modelInfo = ref({
-      name: '',
-      domain: '',
-      entityCount: 0,
-      relationCount: 0,
-      completeness: 0
-    })
-    const currentData = ref(null)
+    const visualizationData = ref(null)
+    const sqlValidation = ref(null)
 
-    const showError = (message) => {
-      errorMessage.value = message
+    // Harmonizer API Composable 사용
+    const { 
+      loading, 
+      error: apiError, 
+      streamChat,
+      clearError: clearApiError
+    } = useHarmonizerApi()
+
+    const handleStartAnalysis = async (sqlQuery) => {
+      console.log('분석 시작:', sqlQuery)
+      // 분석 시작 로직은 ChatPanel에서 처리됩니다
     }
 
-    const hideError = () => {
-      errorMessage.value = ''
+    const handleVisualizationData = (data) => {
+      console.log('시각화 데이터 업데이트:', data)
+      visualizationData.value = data
     }
 
-    const updateInfo = (data) => {
-      modelInfo.value = calculateModelInfo(data)
-      showInfoPanel.value = true
-    }
-
-    const loadSampleData = () => {
-      const sampleData = getSampleData()
-      jsonInput.value = JSON.stringify(sampleData, null, 2)
-      visualizeData()
-    }
-
-    const clearData = () => {
-      jsonInput.value = ''
-      hideError()
-      showInfoPanel.value = false
-      currentData.value = null
-    }
-
-    const visualizeData = () => {
-      hideError()
+    const handleValidationResult = (result) => {
+      console.log('SQL 검증 결과:', result)
+      sqlValidation.value = result
       
-      const input = jsonInput.value.trim()
-      if (!input) {
-        showError('JSON 데이터를 입력해주세요.')
-        return
-      }
-
-      try {
-        const parsedData = JSON.parse(input)
-        currentData.value = parsedData
-        updateInfo(parsedData)
-      } catch (error) {
-        showError('유효하지 않은 JSON 형식입니다: ' + error.message)
+      // 채팅 컴포넌트에서 오류를 표시하므로 여기서는 errorMessage를 설정하지 않음
+      // 다른 종류의 에러만 errorMessage에 설정
+      if (!result || result.isValid) {
+        errorMessage.value = ''
       }
     }
-
-    onMounted(() => {
-      loadSampleData() // 초기 로드 시 샘플 데이터 표시
-    })
 
     return {
-      jsonInput,
+      sqlInput,
       errorMessage,
-      showInfoPanel,
-      modelInfo,
-      currentData,
-      loadSampleData,
-      clearData,
-      visualizeData
+      loading,
+      visualizationData,
+      sqlValidation,
+      handleStartAnalysis,
+      handleVisualizationData,
+      handleValidationResult
     }
   }
 }
@@ -137,11 +114,16 @@ h1 {
   height: calc(100vh - 140px);
 }
 
-.input-panel {
+.left-panel {
   width: 400px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.right-panel {
+  flex: 1;
+  min-width: 600px;
 }
 
 @media (max-width: 1200px) {
@@ -150,8 +132,13 @@ h1 {
     height: auto;
   }
   
-  .input-panel {
+  .left-panel {
     width: 100%;
+  }
+  
+  .right-panel {
+    min-width: auto;
+    min-height: 400px;
   }
 }
 </style>

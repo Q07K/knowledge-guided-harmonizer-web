@@ -1,4 +1,5 @@
 <template>
+  <h2>시각화 패널</h2>
   <div class="visualization-panel">
     <div id="visualization" ref="visualizationContainer"></div>
     <div class="tooltip" id="tooltip"></div>
@@ -263,12 +264,14 @@ export default {
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #visualization {
   width: 100%;
-  height: 600px;
+  height: 100%;
   position: relative;
   cursor: grab;
 }

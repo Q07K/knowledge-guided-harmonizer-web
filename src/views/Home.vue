@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <h1>Knowledge-Guided Harmonizer</h1>
+    <h1>
+      <img src="@/assets/logo.svg" alt="Logo" class="logo" />
+      Knowledge-Guided Harmonizer
+    </h1>
     
     <div class="main-content">
       <div class="left-panel">

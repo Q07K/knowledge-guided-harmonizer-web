@@ -1,0 +1,21 @@
+@use 'variables' as *;
+
+h2 {
+    background: $primary-color;
+    color: $secondary-color;
+    padding: $spacing-header2;
+    margin: 0;
+    font-size: $font-size-header2;
+    font-weight: 600;
+}
+
+.panel {
+    background: $secondary-color;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    height: 100%;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}

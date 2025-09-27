@@ -1,4 +1,5 @@
 <template>
+  <div class="panel">
   <h2>SQL Table Create Query 입력</h2>
   <div class="input-section">
     <ErrorMessage :message="errorMessage" />
@@ -14,6 +15,7 @@
     </div>
     
 
+  </div>
   </div>
 </template>
 
@@ -118,18 +120,18 @@ export default {
 </script>
 
 <style scoped>
-
+.panel {
+  resize: vertical;
+}
 
 #sqlInput {
   width: 100%;
-  height: 300px;
+  height: max-content;
   padding: 16px;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 12px;
   line-height: 1.5;
-  resize: vertical;
   transition: border-color 0.2s ease-in-out;
   outline: none;
 }

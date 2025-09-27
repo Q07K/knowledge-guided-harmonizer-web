@@ -103,6 +103,24 @@ export function useHarmonizerApi() {
     }
   }
 
+  // init-message 스트리밍
+  const streamInitMessage = async (sqlQuery, onData, onError) => {
+    loading.value = true
+    error.value = null
+    
+    try {
+      await harmonizerApi.streamInitMessage(sqlQuery, onData, (err) => {
+        error.value = err.message
+        if (onError) onError(err)
+      })
+    } catch (err) {
+      error.value = err.message
+      if (onError) onError(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   // API 호스트 설정
   const setApiHost = (host) => {
     harmonizerApi.setApiHost(host)
@@ -119,6 +137,7 @@ export function useHarmonizerApi() {
     getMetaModel,
     sendChatMessage,
     streamChat,
+    streamInitMessage,
     setApiHost
   }
 }

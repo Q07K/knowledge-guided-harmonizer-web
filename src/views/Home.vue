@@ -51,6 +51,7 @@ export default {
       loading, 
       error: apiError, 
       streamChat,
+      streamInitMessage,
       clearError: clearApiError
     } = useHarmonizerApi()
 

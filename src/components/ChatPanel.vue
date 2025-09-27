@@ -142,9 +142,8 @@ export default {
       formattedMessage += '다음 질문들에 대한 답변을 통해 온톨로지 모델을 개선할 수 있습니다:\n\n'
       
       checkListData.expansion_questions.forEach((item, index) => {
-        const priorityEmoji = item.priority === '높음' ? '🔴' : item.priority === '보통' ? '🟡' : '🟢'
-        formattedMessage += `${index + 1}. ${priorityEmoji} **[${item.question_type}]** (우선순위: ${item.priority})\n`
-        formattedMessage += `   ${item.expected_question}\n\n`
+        formattedMessage += `${index + 1}. **[${item.question_type}]** (우선순위: ${item.priority})\n`
+        formattedMessage += `${item.expected_question}\n\n`
       })
       
       if (checkListData.next_steps && checkListData.next_steps.length > 0) {
@@ -181,7 +180,7 @@ export default {
 
       // AI 응답 처리
       isLoading.value = true
-      currentNodeState.value = 'API 요청 중...'
+      currentNodeState.value = '요청 중...'
       currentStreamingMessage.value = ''
       
       try {
@@ -441,7 +440,7 @@ export default {
           addMessage('SQL 쿼리 검증 중입니다...', 'ai', 'validating')
         } else if (validation && validation.isValid) {
           // 검증 성공한 경우
-          addMessage('SQL 쿼리가 유효합니다. 분석을 시작하시겠습니까?', 'ai', 'success')
+          addMessage('SQL 쿼리가 유효합니다.\n\n분석을 시작하시겠습니까?', 'ai', 'success')
           addAnalysisButton()
         } else if (validation && !validation.isValid) {
           // 검증 실패한 경우
@@ -523,7 +522,6 @@ export default {
   font-size: 14px;
   line-height: 1.4;
   display: inline-block;
-  white-space: pre-wrap;
   word-wrap: break-word;
 }
 
@@ -687,7 +685,7 @@ export default {
 .message.success .message-text {
   background: $success-color-gradient;
   border-left: 4px solid $success-color-light;
-  color: $success-color-dark;
+  color: $text-color;
 }
 
 .message.success .message-text strong {
@@ -805,12 +803,12 @@ export default {
 
 .message-text :deep(ul),
 .message-text :deep(ol) {
-  margin: 8px 0;
+  margin: 4px 0;
   padding-left: 20px;
 }
 
 .message-text :deep(li) {
-  margin: 4px 0;
+  margin: 2px 0;
 }
 
 .message-text :deep(code) {

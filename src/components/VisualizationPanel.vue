@@ -1,14 +1,14 @@
 <template>
-  <h2>시각화 패널</h2>
-  <div class="visualization-panel">
+  <div class="panel">
+    <h2>시각화 패널</h2>
     <div id="visualization" ref="visualizationContainer"></div>
     <div class="tooltip" id="tooltip"></div>
-    <div class="legend">
+    <!-- <div class="legend">
       <div class="legend-item">
         <div class="legend-color" style="background: #667eea;"></div>
         <span>엔티티 타입</span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -257,17 +257,11 @@ export default {
 </script>
 
 <style scoped>
-.visualization-panel {
+.panel {
   flex: 1;
-  margin-top: 24px;
   position: relative;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  overflow: hidden;
   width: 100%;
   height: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 #visualization {

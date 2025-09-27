@@ -118,29 +118,16 @@ export default {
 </script>
 
 <style scoped>
-.input-section {
-  margin-bottom: 24px;
-}
 
-.input-section h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #2d3748;
-}
-
-.textarea-container {
-  margin-bottom: 16px;
-}
 
 #sqlInput {
   width: 100%;
   height: 300px;
   padding: 16px;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 12px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
   resize: vertical;
   transition: border-color 0.2s ease-in-out;

@@ -18,4 +18,11 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/assets/_variables.scss" as *;`
+      }
+    }
+  }
 })

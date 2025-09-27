@@ -1,8 +1,7 @@
 <template>
-  <div class="chat-panel">
-    <h2>AI 채팅</h2>
-    
+  <div class="panel">
     <div class="chat-container">
+      <h2>AI 채팅</h2>
       <div class="messages-container" ref="messagesContainer">
         <div 
           v-for="message in messages" 
@@ -479,31 +478,17 @@ export default {
 }
 </script>
 
-<style scoped>
-.chat-panel {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-  overflow: hidden;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+<style lang="scss" scoped>
 
-h2 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  margin: 0;
-  padding: 16px 20px;
-  font-size: 18px;
-  font-weight: 600;
+.panel {
+  height: 100%;
 }
 
 .chat-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 
 .messages-container {

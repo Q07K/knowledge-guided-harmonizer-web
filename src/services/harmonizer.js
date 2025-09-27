@@ -53,6 +53,18 @@ export class HarmonizerApiService {
     }, onData, onError)
   }
 
+  // init-message 스트리밍 요청
+  async streamInitMessage(sqlQuery, onData, onError) {
+    if (!sqlQuery || !sqlQuery.trim()) {
+      throw new Error('SQL 쿼리가 비어있습니다.')
+    }
+
+    return await apiService.streamRequest('/init-message', {
+      method: 'POST',
+      body: JSON.stringify({ sqlQuery: sqlQuery.trim() })
+    }, onData, onError)
+  }
+
   // API 서버 URL 설정
   setApiHost(host) {
     apiService.setBaseURL(host)

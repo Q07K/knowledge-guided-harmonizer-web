@@ -1,18 +1,18 @@
 <template>
   <div class="panel">
-  <h2>SQL Table Create Query 입력</h2>
-  <div class="input-section">
-    <ErrorMessage :message="errorMessage" />
-    
-    <div class="textarea-container">
-      <textarea 
-        id="sqlInput" 
-        :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
-        placeholder="여기에 SQL CREATE TABLE 쿼리를 입력하세요...&#10;&#10;예시:&#10;CREATE TABLE users (&#10;  id INT PRIMARY KEY,&#10;  name VARCHAR(100),&#10;  email VARCHAR(255)&#10;);"
-        :class="validationClass"
-      ></textarea>
-    </div>
+    <h2>SQL Table Create Query 입력</h2>
+    <div class="input-section">
+      <ErrorMessage :message="errorMessage" />
+      
+      <div class="textarea-container">
+        <textarea 
+          id="sqlInput" 
+          :value="modelValue"
+          @input="$emit('update:modelValue', $event.target.value)"
+          placeholder="여기에 SQL CREATE TABLE 쿼리를 입력하세요...&#10;&#10;예시:&#10;CREATE TABLE users (&#10;  id INT PRIMARY KEY,&#10;  name VARCHAR(100),&#10;  email VARCHAR(255)&#10;);"
+          :class="validationClass"
+        ></textarea>
+      </div>
     
 
   </div>

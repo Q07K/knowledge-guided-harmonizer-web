@@ -528,7 +528,7 @@ export default {
 }
 
 .message.user .message-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: $primary-color;
   color: white;
   margin-left: auto;
 }
@@ -599,7 +599,7 @@ export default {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: $primary-color;
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -689,24 +689,24 @@ export default {
 
 /* 성공 메시지 스타일 */
 .message.success .message-text {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  border-left: 4px solid #10b981;
-  color: #047857;
+  background: $success-color-gradient;
+  border-left: 4px solid $success-color-light;
+  color: $success-color-dark;
 }
 
 .message.success .message-text strong {
-  color: #065f46;
+  color: $success-color-dark;
   font-weight: 700;
 }
 /* 실패 메시지 스타일 */
 .message.error .message-text {
-  background: linear-gradient(135deg, #fad1d1 0%, #f3a7a7 100%);
-  border-left: 4px solid #b91010;
-  color: #780404;
+  background: $error-color-gradient;
+  border-left: 4px solid $error-color-light;
+  color: $error-color-dark;
 }
 
 .message.error .message-text strong {
-  color: #5f0606;
+  color: $error-color-dark;
   font-weight: 700;
 }
 

@@ -45,9 +45,9 @@ h1 {
     overflow-y: auto;
 }
 
-.input-section {
+/* .input-section {
     margin-bottom: 20px;
-}
+} */
 
 .input-section h2 {
     color: #2d3748;
@@ -58,7 +58,6 @@ h1 {
 
 .textarea-container {
     position: relative;
-    margin-bottom: 16px;
 }
 
 #jsonInput {

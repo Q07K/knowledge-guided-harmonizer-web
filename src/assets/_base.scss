@@ -1,5 +1,8 @@
 @use 'variables' as *;
 
+.logo {
+    height: 32px;
+}
 h2 {
     background: $primary-color;
     color: $secondary-color;

@@ -114,7 +114,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .panel {
   resize: vertical;
 }
@@ -123,7 +123,7 @@ export default {
   width: 100%;
   height: 100%;
   padding: 16px;
-  border: 2px solid #e2e8f0;
+  border: 3px solid #e2e8f0;
   border-radius: 0px 0px 12px 12px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 12px;
@@ -139,48 +139,15 @@ export default {
 
 /* 검증 상태에 따른 스타일 */
 #sqlInput.validating {
-  border-color: #fbbf24;
+  border-color: $warning-color-light;
 }
 
 #sqlInput.valid {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  border-color: $success-color-light;
 }
 
 #sqlInput.invalid {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+  border-color: $error-color-light;
 }
 
-
-.button-group {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-}
-
-.btn-secondary:hover {
-  box-shadow: 0 4px 12px rgba(113, 128, 150, 0.3);
-}
 </style>

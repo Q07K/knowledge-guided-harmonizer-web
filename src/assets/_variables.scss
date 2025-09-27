@@ -7,17 +7,17 @@ $text-color: #2c3e50;
 
 // Colors(Status)
 $success-color-dark: #065f46;
-$success-color-light: #69ae6e;
-$success-color-gradient: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+$success-color-light: #7eda85;
+$success-color-gradient: linear-gradient(90deg, #dcf3e2 0%, #f1f3f4 60%);
 
 
 $error-color-dark: #5f0606;
 $error-color-light: #ea5252;
-$error-color-gradient: linear-gradient(135deg, #fcdede 0%, #f9b9b9 100%);
+$error-color-gradient: linear-gradient(90deg, #fcdede 0%, #f1f3f4 60%);
 
 $warning-color-dark: #f39c12;
 $warning-color-light: #f7c873;
-$warning-color-gradient: linear-gradient(135deg, #fff4e5 0%, #ffe0b3 100%);
+$warning-color-gradient: linear-gradient(90deg, #fff4e5 0%, #f1f3f4 60%);
 
 // Typography
 $font-size-header2: 18px;

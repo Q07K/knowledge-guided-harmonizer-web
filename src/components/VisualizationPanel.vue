@@ -259,6 +259,7 @@ export default {
 <style scoped>
 .visualization-panel {
   flex: 1;
+  margin-top: 24px;
   position: relative;
   background: white;
   border: 1px solid #e2e8f0;

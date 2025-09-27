@@ -10,7 +10,7 @@
           :class="['message', message.type, message.messageClass]"
         >
           <div class="message-content">
-            <div v-if="!message.isAnalysisButton" class="message-text">{{ message.text }}</div>
+            <div v-if="!message.isAnalysisButton" class="message-text" v-html="renderMarkdown(message.text)"></div>
             <div v-else class="analysis-button-container">
               <button 
                 @click="startAnalysis"
@@ -29,7 +29,7 @@
           <div class="message-content">
             <!-- 스트리밍 중인 메시지가 있으면 표시 -->
             <div v-if="currentStreamingMessage" class="message-text streaming">
-              {{ currentStreamingMessage }}
+              <span v-html="renderMarkdown(currentStreamingMessage)"></span>
               <span class="cursor-blink">|</span>
             </div>
             <!-- 스트리밍 메시지가 없으면 타이핑 인디케이터 표시 -->
@@ -55,7 +55,7 @@
           <textarea 
             v-model="currentMessage"
             @keydown="handleKeydown"
-            placeholder="메시지를 입력하세요... (Shift+Enter로 새 줄, Enter로 전송)"
+            placeholder="메시지를 입력하세요.&#10;(Shift+Enter로 새 줄, Enter로 전송)"
             class="message-input"
             ref="messageInput"
           ></textarea>
@@ -79,6 +79,8 @@
 import { ref, nextTick, onMounted, watch } from 'vue'
 import { useHarmonizerApi } from '../composables/useHarmonizerApi.js'
 import { validateSqlCreateTable } from './utils.js'
+import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 
 export default {
   name: 'ChatPanel',
@@ -102,9 +104,26 @@ export default {
     const currentNodeState = ref('')
     const currentStreamingMessage = ref('')
     
-    const { streamChat, initMessage, sendChatMessage } = useHarmonizerApi()
+    const { streamChat, streamInitMessage, sendChatMessage } = useHarmonizerApi()
     
     let messageIdCounter = 0
+
+    // marked 설정
+    marked.setOptions({
+      breaks: true,
+      gfm: true
+    })
+
+    // 마크다운 렌더링 함수
+    const renderMarkdown = (text) => {
+      if (!text) return ''
+      
+      // 마크다운을 HTML로 변환
+      const html = marked(text)
+      
+      // XSS 방지를 위해 HTML을 정화
+      return DOMPurify.sanitize(html)
+    }
 
     const addMessage = (text, type = 'user', messageClass = null) => {
       const message = {
@@ -116,6 +135,27 @@ export default {
       }
       messages.value.push(message)
       scrollToBottom()
+    }
+
+    // 체크리스트 메시지 포맷팅 함수
+    const formatCheckListMessage = (checkListData) => {
+      let formattedMessage = `📋 **${checkListData.topic}**\n\n`
+      formattedMessage += '다음 질문들에 대한 답변을 통해 온톨로지 모델을 개선할 수 있습니다:\n\n'
+      
+      checkListData.expansion_questions.forEach((item, index) => {
+        const priorityEmoji = item.priority === '높음' ? '🔴' : item.priority === '보통' ? '🟡' : '🟢'
+        formattedMessage += `${index + 1}. ${priorityEmoji} **[${item.question_type}]** (우선순위: ${item.priority})\n`
+        formattedMessage += `   ${item.expected_question}\n\n`
+      })
+      
+      if (checkListData.next_steps && checkListData.next_steps.length > 0) {
+        formattedMessage += '**다음 단계:**\n'
+        checkListData.next_steps.forEach((step, index) => {
+          formattedMessage += `${index + 1}. ${step}\n`
+        })
+      }
+      
+      return formattedMessage
     }
 
     const scrollToBottom = async () => {
@@ -210,7 +250,7 @@ export default {
       scrollToBottom()
     }
 
-    // 분석 시작 처리 - 실제 /init-message API 호출
+    // 분석 시작 처리 - 스트리밍 방식으로 /init-message API 호출
     const startAnalysis = async () => {
       if (!props.sqlQuery || !props.sqlQuery.trim()) {
         addMessage('SQL 쿼리가 입력되지 않았습니다. 먼저 SQL 쿼리를 입력해주세요.', 'ai')
@@ -226,7 +266,7 @@ export default {
         }
       }
 
-      console.log('=== SQL 검증 통과, 실제 API 호출 시작 ===')
+      console.log('=== SQL 검증 통과, 스트리밍 API 호출 시작 ===')
       console.log('SQL Query:', props.sqlQuery)
       
       // 분석 중 상태로 변경
@@ -235,13 +275,20 @@ export default {
       currentStreamingMessage.value = ''
       
       try {
-        // 실제 /init-message API 호출
-        console.log('Calling /init-message API...')
-        const response = await initMessage(props.sqlQuery)
-        console.log('API Response:', response)
-        
-        // API 응답 파싱 및 화면 표시
-        await processApiResponse(response)
+        // 스트리밍 방식으로 /init-message API 호출
+        console.log('Calling streaming /init-message API...')
+        await streamInitMessage(
+          props.sqlQuery,
+          (data) => {
+            console.log('Streaming data received:', data)
+            handleStreamingData(data)
+          },
+          (error) => {
+            console.error('Streaming error:', error)
+            currentNodeState.value = 'API 오류'
+            addMessage(`스트리밍 오류: ${error.message}`, 'ai')
+          }
+        )
         
       } catch (apiError) {
         console.error('API 호출 실패:', apiError)
@@ -261,6 +308,61 @@ export default {
         isLoading.value = false
         currentNodeState.value = ''
         currentStreamingMessage.value = ''
+      }
+    }
+
+    // 스트리밍 데이터 처리 함수
+    const handleStreamingData = (data) => {
+      if (data.state_code === 200 && data.data) {
+        const { name, state, message } = data.data
+        
+        // 현재 노드 상태 업데이트
+        if (name) {
+          currentNodeState.value = name
+        }
+        
+        // 상태별 처리
+        switch (state) {
+          case 'current_ontology':
+            // 온톨로지 JSON 파싱 후 시각화 패널로 전송
+            try {
+              const ontologyData = typeof message === 'string' ? JSON.parse(message) : message
+              console.log('Ontology data parsed:', ontologyData)
+              emit('visualization-data', ontologyData)
+              
+              // 채팅에도 요약 메시지 추가
+              addMessage(`온톨로지 스키마가 생성되었습니다.\n\n**도메인:** ${ontologyData.domain}\n${ontologyData.relation_types.length}개`, 'ai', 'success')
+            } catch (parseError) {
+              console.error('Ontology parsing error:', parseError)
+              addMessage('온톨로지 데이터 파싱 중 오류가 발생했습니다.', 'ai', 'error')
+            }
+            break
+            
+          case 'check_list_items':
+            // 체크리스트 메시지 포맷팅 후 채팅에 추가
+            try {
+              const checkListData = typeof message === 'string' ? JSON.parse(message) : message
+              console.log('Checklist data parsed:', checkListData)
+              const formattedMessage = formatCheckListMessage(checkListData)
+              addMessage(formattedMessage, 'ai', 'checklist')
+            } catch (parseError) {
+              console.error('Checklist parsing error:', parseError)
+              addMessage('체크리스트 데이터 파싱 중 오류가 발생했습니다.', 'ai', 'error')
+            }
+            break
+            
+          case 'sql_query_analyzed':
+            // SQL 분석 완료 메시지
+            addMessage(message, 'ai', 'success')
+            break
+            
+          default:
+            // 기타 메시지들
+            if (message) {
+              addMessage(message, 'ai')
+            }
+            break
+        }
       }
     }
 
@@ -340,7 +442,7 @@ export default {
           addMessage('SQL 쿼리 검증 중입니다...', 'ai', 'validating')
         } else if (validation && validation.isValid) {
           // 검증 성공한 경우
-          addMessage('✅ SQL 쿼리가 유효합니다. 분석을 시작하시겠습니까?', 'ai', 'success')
+          addMessage('SQL 쿼리가 유효합니다. 분석을 시작하시겠습니까?', 'ai', 'success')
           addAnalysisButton()
         } else if (validation && !validation.isValid) {
           // 검증 실패한 경우
@@ -370,7 +472,8 @@ export default {
       sendMessage,
       handleKeydown,
       formatTime,
-      startAnalysis
+      startAnalysis,
+      renderMarkdown
     }
   }
 }
@@ -400,7 +503,7 @@ h2 {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
 }
 
 .messages-container {
@@ -411,7 +514,7 @@ h2 {
 }
 
 .message {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   display: flex;
 }
 
@@ -434,6 +537,7 @@ h2 {
   border-radius: 18px;
   font-size: 14px;
   line-height: 1.4;
+  display: inline-flex;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -583,6 +687,44 @@ h2 {
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
+/* 체크리스트 메시지 스타일 */
+.message.checklist .message-text {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left: 4px solid #f59e0b;
+  padding: 16px;
+  line-height: 1.6;
+  white-space: pre-line;
+  font-family: 'Inter', sans-serif;
+}
+
+.message.checklist .message-text strong {
+  color: #92400e;
+  font-weight: 700;
+}
+
+/* 성공 메시지 스타일 */
+.message.success .message-text {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-left: 4px solid #10b981;
+  color: #047857;
+}
+
+.message.success .message-text strong {
+  color: #065f46;
+  font-weight: 700;
+}
+/* 실패 메시지 스타일 */
+.message.error .message-text {
+  background: linear-gradient(135deg, #fad1d1 0%, #f3a7a7 100%);
+  border-left: 4px solid #b91010;
+  color: #780404;
+}
+
+.message.error .message-text strong {
+  color: #5f0606;
+  font-weight: 700;
+}
+
 .analysis-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
@@ -599,7 +741,7 @@ h2 {
 .input-wrapper {
   display: flex;
   gap: 12px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .message-input {
@@ -646,6 +788,136 @@ h2 {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+/* 마크다운 스타일 */
+.message-text :deep(p) {
+  margin: 0 0 8px 0;
+}
+
+.message-text :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.message-text :deep(h1),
+.message-text :deep(h2),
+.message-text :deep(h3),
+.message-text :deep(h4),
+.message-text :deep(h5),
+.message-text :deep(h6) {
+  margin: 12px 0 8px 0;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.message-text :deep(h1) { font-size: 1.5em; }
+.message-text :deep(h2) { font-size: 1.3em; }
+.message-text :deep(h3) { font-size: 1.1em; }
+
+.message-text :deep(strong) {
+  font-weight: 700;
+}
+
+.message-text :deep(em) {
+  font-style: italic;
+}
+
+.message-text :deep(ul),
+.message-text :deep(ol) {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.message-text :deep(li) {
+  margin: 4px 0;
+}
+
+.message-text :deep(code) {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+}
+
+.message-text :deep(pre) {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 8px 0;
+  overflow-x: auto;
+}
+
+.message-text :deep(pre code) {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.message-text :deep(blockquote) {
+  margin: 8px 0;
+  padding: 8px 16px;
+  border-left: 4px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 0 4px 4px 0;
+}
+
+.message-text :deep(table) {
+  border-collapse: collapse;
+  margin: 8px 0;
+  width: 100%;
+}
+
+.message-text :deep(table th),
+.message-text :deep(table td) {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 6px 12px;
+  text-align: left;
+}
+
+.message-text :deep(table th) {
+  background: rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+}
+
+.message-text :deep(a) {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.message-text :deep(a:hover) {
+  text-decoration: underline;
+}
+
+/* AI 메시지의 마크다운 스타일 조정 */
+.message.ai .message-text :deep(code) {
+  background: rgba(45, 55, 72, 0.1);
+}
+
+.message.ai .message-text :deep(pre) {
+  background: rgba(45, 55, 72, 0.05);
+  border-color: rgba(45, 55, 72, 0.1);
+}
+
+.message.ai .message-text :deep(blockquote) {
+  background: rgba(45, 55, 72, 0.05);
+  border-left-color: rgba(45, 55, 72, 0.2);
+}
+
+/* 사용자 메시지의 마크다운 스타일 (흰색 배경용) */
+.message.user .message-text :deep(code) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.message.user .message-text :deep(pre) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.message.user .message-text :deep(blockquote) {
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: rgba(255, 255, 255, 0.3);
 }
 
 /* 스크롤바 커스터마이징 */

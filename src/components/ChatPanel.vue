@@ -138,7 +138,7 @@ export default {
 
     // 체크리스트 메시지 포맷팅 함수
     const formatCheckListMessage = (checkListData) => {
-      let formattedMessage = `📋 **${checkListData.topic}**\n\n`
+      let formattedMessage = `**${checkListData.topic}**\n\n`
       formattedMessage += '다음 질문들에 대한 답변을 통해 온톨로지 모델을 개선할 수 있습니다:\n\n'
       
       checkListData.expansion_questions.forEach((item, index) => {
@@ -330,7 +330,7 @@ export default {
               emit('visualization-data', ontologyData)
               
               // 채팅에도 요약 메시지 추가
-              addMessage(`온톨로지 스키마가 생성되었습니다.\n\n**도메인:** ${ontologyData.domain}\n${ontologyData.relation_types.length}개`, 'ai', 'success')
+              addMessage(`온톨로지 스키마가 생성되었습니다.`, 'ai', 'success')
             } catch (parseError) {
               console.error('Ontology parsing error:', parseError)
               addMessage('온톨로지 데이터 파싱 중 오류가 발생했습니다.', 'ai', 'error')
@@ -343,7 +343,7 @@ export default {
               const checkListData = typeof message === 'string' ? JSON.parse(message) : message
               console.log('Checklist data parsed:', checkListData)
               const formattedMessage = formatCheckListMessage(checkListData)
-              addMessage(formattedMessage, 'ai', 'checklist')
+              addMessage(formattedMessage, 'ai', 'ai')
             } catch (parseError) {
               console.error('Checklist parsing error:', parseError)
               addMessage('체크리스트 데이터 파싱 중 오류가 발생했습니다.', 'ai', 'error')
@@ -522,14 +522,14 @@ export default {
   border-radius: 18px;
   font-size: 14px;
   line-height: 1.4;
-  display: inline-flex;
+  display: inline-block;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
 .message.user .message-text {
   background: $primary-color;
-  color: white;
+  color: $secondary-color;
   margin-left: auto;
 }
 
@@ -585,10 +585,6 @@ export default {
     opacity: 1;
   }
 }
-
-
-
-
 
 .node-state-indicator {
   margin-top: 12px;

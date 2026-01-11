@@ -1,4 +1,42 @@
-/* 기본 스타일 */
+/* Modern Design System - Dark Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    /* Color Palette - Deep Space & Neon */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    
+    --accent-primary: #8b5cf6; /* Violet */
+    --accent-secondary: #d946ef; /* Fuchsia */
+    --accent-glow: rgba(139, 92, 246, 0.5);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-hover: rgba(255, 255, 255, 0.2);
+    
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    
+    /* Spacing & Layout */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    
+    --header-height: 70px;
+}
+
+/* Reset & Base */
 * {
     margin: 0;
     padding: 0;
@@ -6,294 +44,99 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-primary);
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.15), transparent 25%);
+    color: var(--text-primary);
     min-height: 100vh;
-    color: #333;
-    overflow: hidden; /* 스크롤 방지 */
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
-.container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 20px;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-h1 {
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.main-content {
-    display: grid;
-    grid-template-columns: 1fr 2fr; /* 시각화 패널 너비 조정 */
-    gap: 20px;
-    height: calc(100vh - 110px);
+::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 4px;
 }
 
-.input-panel {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow-y: auto;
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
-/* .input-section {
-    margin-bottom: 20px;
-} */
-
-.input-section h2 {
-    color: #2d3748;
-    margin-bottom: 16px;
-    font-size: 1.4rem;
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
     font-weight: 600;
+    letter-spacing: -0.02em;
 }
 
-.textarea-container {
-    position: relative;
-}
-
-#jsonInput {
-    width: 100%;
-    height: 300px;
-    padding: 16px;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 12px;
-    resize: vertical;
-    background: #f8fafc;
-    transition: all 0.2s ease-in-out;
-}
-
-#jsonInput:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    background: white;
-}
-
-.button-group {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+/* Utilities */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius-lg);
 }
 
 .btn {
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     color: white;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
 }
 
 .btn:active {
     transform: translateY(0);
 }
 
-.btn-secondary {
-    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+.input-base {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
 }
 
-.visualization-panel {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    position: relative;
+.input-base:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
 }
 
-.info-panel {
-    background: #f7fafc;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid #e2e8f0;
-    margin-top: 20px;
-}
-
-.info-panel h3 {
-    color: #2d3748;
-    margin-bottom: 12px;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.info-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-    font-size: 0.9rem;
-}
-
-.tooltip {
-    position: absolute;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    max-width: 300px;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.legend {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    z-index: 100;
-}
-
-.legend-item {
+/* Layout Helpers */
+.flex-center {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    font-size: 12px;
+    justify-content: center;
 }
 
-.legend-color {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    margin-right: 8px;
-}
-
-.error-message {
-    background: #fed7d7;
-    color: #c53030;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    border-left: 4px solid #e53e3e;
-    display: none;
-}
-
-#visualization {
-    width: 100%;
-    height: 100%;
-}
-
-/* --- 인터랙션 스타일 개선 --- */
-.node-group {
-    cursor: pointer;
-}
-
-.node {
-    stroke-width: 3px;
-    transition: all 0.2s ease-in-out;
-    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
-}
-
-.node-group:hover .node {
-    transform: scale(1.1);
-}
-
-.entity-node {
-    fill: #667eea;
-    stroke: #4c51bf;
-}
-
-.node.pinned {
-     stroke: #f6e05e; /* 고정 시 노란색 테두리 */
-     stroke-width: 4px;
-}
-
-.node-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-anchor: middle;
-    fill: white;
-    pointer-events: none;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    dominant-baseline: central;
-}
-
-.relation-label {
-    font-size: 11px;
-    font-weight: 500;
-    text-anchor: middle;
-    fill: #2d3748;
-    pointer-events: none;
-    font-style: italic;
-}
-
-.relation-label-bg {
-    fill: rgba(255,255,255,0.85);
-    stroke: #e2e8f0;
-    stroke-width: 1;
-    rx: 4;
-    ry: 4;
-}
-
-/* 호버 효과 스타일 */
-.fade {
-    opacity: 0.1 !important;
-    transition: opacity 0.2s ease-in-out;
-}
-
-.highlight {
-    stroke: #4c51bf !important;
-    stroke-width: 3px !important;
-    transition: all 0.2s ease-in-out;
-}
-
-/* 링크 스타일 */
-.link {
-    stroke: #a0aec0;
-    stroke-width: 2;
-    fill: none;
-    transition: all 0.2s ease-in-out;
-}
-
-.link.fade {
-    opacity: 0.1;
-}
-
-.link.highlight {
-    stroke: #4c51bf;
-    stroke-width: 3px;
-}
-
-@media (max-width: 1024px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        height: auto;
-    }
-    .visualization-panel {
-        height: 60vh;
-    }
-    .container {
-        padding: 16px;
-    }
-    h1 {
-        font-size: 2rem;
-    }
+.text-gradient {
+    background: linear-gradient(135deg, #ddd6fe, #f5d0fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }

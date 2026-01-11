@@ -1,5 +1,5 @@
 <template>
-  <div class="panel">
+  <div class="glass-panel panel">
 
     <h2>SQL Table Create Query 입력</h2>
     <ErrorMessage :message="errorMessage" />
@@ -116,38 +116,68 @@ export default {
 
 <style lang="scss" scoped>
 .panel {
-  resize: vertical;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  /* height is controlled by parent or content */
 }
 
-#sqlInput {
+h2 {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    background: var(--accent-primary);
+    border-radius: 2px;
+  }
+}
+
+textarea#sqlInput {
   width: 100%;
-  height: 100%;
+  height: 250px; /* Fixed height for consistency */
   padding: 16px;
-  border: 3px solid #e2e8f0;
-  border-radius: 0px 0px 12px 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 12px;
-  line-height: 1.5;
-  transition: border-color 0.2s ease-in-out;
-  outline: none;
-}
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s ease;
+  
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
 
-#sqlInput:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
+  &:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+    background: rgba(15, 23, 42, 0.8);
+  }
 
-/* 검증 상태에 따른 스타일 */
-#sqlInput.validating {
-  border-color: $warning-color-light;
-}
+  &.validating {
+    border-color: var(--warning);
+  }
 
-#sqlInput.valid {
-  border-color: $success-color-light;
-}
+  &.valid {
+    border-color: var(--success);
+    box-shadow: 0 0 0 1px var(--success);
+  }
 
-#sqlInput.invalid {
-  border-color: $error-color-light;
+  &.invalid {
+    border-color: var(--error);
+    box-shadow: 0 0 0 1px var(--error);
+  }
 }
-
 </style>

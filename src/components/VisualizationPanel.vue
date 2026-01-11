@@ -1,5 +1,5 @@
 <template>
-  <div class="panel">
+  <div class="glass-panel panel">
     <h2>시각화 패널</h2>
     <div id="visualization" ref="visualizationContainer"></div>
     <div class="tooltip" id="tooltip"></div>
@@ -67,7 +67,7 @@ export default {
         .attr('orient', 'auto')
         .append('path')
         .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', '#a0aec0')
+        .attr('fill', '#94a3b8')
         .style('transition', 'fill 0.2s ease-in-out')
 
       const nodes = data.entity_types.map(d => ({...d, id: d.name}))
@@ -262,6 +262,30 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  padding: 20px 20px 10px;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  z-index: 10;
+  
+  &::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    background: var(--accent-primary);
+    border-radius: 2px;
+  }
 }
 
 #visualization {
@@ -269,6 +293,11 @@ export default {
   height: 100%;
   position: relative;
   cursor: grab;
+  /* Grid pattern background */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 #visualization:active {
@@ -277,9 +306,9 @@ export default {
 
 .tooltip {
   position: absolute;
-  background: rgba(45, 55, 72, 0.95);
-  color: white;
-  padding: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-primary);
+  padding: 12px 16px;
   border-radius: 8px;
   font-size: 12px;
   pointer-events: none;
@@ -287,71 +316,48 @@ export default {
   transition: opacity 0.2s ease-in-out;
   max-width: 250px;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(4px);
 }
 
-.legend {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  font-size: 12px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.legend-item:last-child {
-  margin-bottom: 0;
-}
-
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-/* D3.js 스타일 */
+/* D3.js Styles */
 :deep(.node) {
-  fill: #667eea;
-  stroke: #4c51bf;
-  stroke-width: 2;
+  fill: var(--bg-secondary);
+  stroke: var(--accent-primary);
+  stroke-width: 2px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
 :deep(.node:hover) {
-  fill: #5a67d8;
-  r: 28;
+  fill: var(--accent-primary);
+  stroke: var(--text-primary);
+  filter: drop-shadow(0 0 8px var(--accent-glow));
 }
 
 :deep(.node.pinned) {
-  fill: #ed8936;
-  stroke: #c05621;
+  stroke: var(--warning);
+  stroke-width: 3px;
 }
 
 :deep(.node-label) {
-  fill: white;
-  font-size: 10px;
-  font-weight: 600;
+  fill: var(--text-primary);
+  font-size: 11px;
+  font-weight: 500;
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
 :deep(.node-group.fade) {
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 :deep(.link) {
-  opacity: 0.6;
+  stroke: var(--text-tertiary);
+  stroke-opacity: 0.4;
   transition: all 0.2s ease-in-out;
 }
 
@@ -360,28 +366,29 @@ export default {
 }
 
 :deep(.link.highlight) {
-  stroke: #667eea;
-  stroke-width: 3;
-  opacity: 1;
+  stroke: var(--accent-secondary);
+  stroke-width: 2px;
+  stroke-opacity: 1;
 }
 
 :deep(.relation-label) {
   font-size: 10px;
   font-weight: 600;
-  fill: #4a5568;
+  fill: var(--text-secondary);
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
 }
 
 :deep(.relation-label-bg) {
-  fill: white;
-  stroke: #e2e8f0;
-  stroke-width: 1;
+  fill: var(--bg-primary);
+  stroke: var(--border-color);
+  stroke-width: 1px;
   rx: 4;
+  fill-opacity: 0.9;
 }
 
 :deep(.relation-label-group.fade) {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 </style>

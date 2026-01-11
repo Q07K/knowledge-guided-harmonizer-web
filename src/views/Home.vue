@@ -2,7 +2,7 @@
   <div class="container">
     <h1>
       <img src="@/assets/logo.svg" alt="Logo" class="logo" />
-      Knowledge-Guided Harmonizer
+      <span class="text-gradient">Knowledge-Guided Harmonizer</span>
     </h1>
     
     <div class="main-content">
@@ -95,39 +95,47 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
 }
 
 h1 {
   text-align: center;
-  color: #2d3748;
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 32px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logo {
+  height: 40px;
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
 }
 
 .main-content {
   display: flex;
-  gap: 24px;
-  height: calc(100vh - 140px);
+  gap: 20px;
+  height: calc(100vh - 100px);
 }
 
 .left-panel {
-  width: 400px;
+  width: 450px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  flex-shrink: 0;
 }
 
 .right-panel {
   flex: 1;
-  min-width: 600px;
+  min-width: 0; /* Flexbox overflow fix */
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 1200px) {
@@ -138,11 +146,11 @@ h1 {
   
   .left-panel {
     width: 100%;
+    height: 600px;
   }
   
   .right-panel {
-    min-width: auto;
-    min-height: 400px;
+    height: 600px;
   }
 }
 </style>
